@@ -8,12 +8,11 @@
 **Project Completion Year**: 2024
 
 ## Description
-The SmartAlert Backend is a server-side application designed to support the SmartAlert mobile application, which provides immediate notifications to citizens during high-risk emergency situations. This backend handles user authentication, incident management, and notification dispatching, ensuring that users receive timely and accurate information.
+The SmartAlert Backend is a server-side application designed to support the SmartAlert mobile application, which provides immediate notifications to citizens during high-risk emergency situations. This backend handles incident management, and notification dispatching, ensuring that users receive timely and accurate information.
 
 From the Android app, citizens can send a new report, which is a request to the server (Spring Boot). The backend server receives this request from the sender (citizen) and processes it, generating a group of data through a PostgreSQL database trigger function named [`assign_report_to_group`](sql-scripts/create_functions.sql). The group data is then sent to Firebase Real-time Database, allowing the Android application to inform employees in real-time about the new incident. Employees can accept or decline the incident, and based on their decision, if the incident is approved, the backend server sends an alert message (push notification) through Firebase to inform citizens near the incident.
 
 ## Features
-- **User Authentication**: Secure login and registration for users, ensuring that only authorized individuals can access the system.
 - **Incident Reporting**: Citizens can submit high-risk incident reports through the Android app, which sends a request to the Spring Boot backend.
 - **Data Processing**: The backend processes incoming requests and generates a group of data using the PostgreSQL database trigger function [`assign_report_to_group`](sql-scripts/create_functions.sql).
 - **Real-time Database Integration**: The generated group data is sent to Firebase Real-time Database, enabling immediate updates to the application.

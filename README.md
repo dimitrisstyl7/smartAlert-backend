@@ -1,4 +1,4 @@
-# SmartAlert Web Service - Backend
+# SmartAlert Backend
 
 ## [University of Piraeus](https://www.unipi.gr/en/home/) | [Department of Informatics](https://cs.unipi.gr/en/)
 **BSc course**: Current Topics Of Software Engineering - Software For Mobile Devices

@@ -1,0 +1,25 @@
+services:
+  postgres:
+    container_name: postgres-smartAlert
+    image: postgis/postgis:17-3.5
+    env_file: .env
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: smartAlert_db
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - smartAlert_postgres_data:/var/lib/postgresql/data
+      # Initialize the database with the scripts in the sql-scripts directory
+      - ./sql-scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - smartAlert-network
+    restart: unless-stopped
+
+networks:
+  smartAlert-network:
+    driver: bridge
+
+volumes:
+  smartAlert_postgres_data:

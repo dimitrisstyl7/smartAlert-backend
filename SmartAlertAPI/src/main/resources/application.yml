@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/smartAlert_db
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+
+# Service account location can be a filesystem path or a classpath resource
+gcp:
+  firebase:
+    service-account: classpath:firebase-service-account.json
+    database-url: ${FIREBASE_URL}

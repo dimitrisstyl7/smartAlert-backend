@@ -9,7 +9,7 @@ import org.springframework.core.io.Resource;
 public class FirebaseProperties {
 
     // Gets the service account JSON file from the classpath.
-    // The classpath definition is located in the application.properties file.
+    // The classpath definition is located in the application.yml file.
     private Resource serviceAccount;
     private String databaseUrl;
     

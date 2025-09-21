@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "incident_reports")
+@Table(name = "incident_report")
 public class IncidentReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,29 +1,15 @@
 -- Enable PostGIS extension
-CREATE EXTENSION IF NOT EXISTS postgis;
+create extension if not exists postgis;
 
--- drop tables
-drop table if exists incident_reports;
-drop table if exists report_groups;
-drop table if exists incident_category_names;
-drop table if exists incident_categories;
-drop table if exists users;
-drop table if exists roles;
-
--- drop cast for group_status
-drop cast (varchar as group_status);
-
--- drop group_status enum
-drop type if exists group_status;
-
--- create table roles
-create table roles
+-- create table role
+create table role
 (
     id    serial primary key,
     title varchar(16) not null unique
 );
 
--- create table users
-create table users
+-- create table user
+create table "user"
 (
     id         serial primary key,
     -- The maximum length of an email address is 254 characters according to the specification (RFC 5321).
@@ -33,34 +19,34 @@ create table users
     last_name  varchar(128) not null,
     role_id    int          not null,
     created_at timestamp    not null default now(),
-    foreign key (role_id) references roles (id)
+    foreign key (role_id) references role (id)
 );
 
--- create table incident_categories
-create table incident_categories
+-- create table incident_category
+create table incident_category
 (
     id                           serial primary key,
     init_search_radius_in_meters double precision not null
 );
 
--- create table incident_category_names
-create table incident_category_names
+-- create table incident_category_name
+create table incident_category_name
 (
     category_id int          not null,
     language    char(2)      not null,
     name        varchar(128) not null,
     primary key (category_id, language),
-    foreign key (category_id) references incident_categories (id)
+    foreign key (category_id) references incident_category (id)
 );
 
 -- create enum group_status
-CREATE TYPE group_status AS ENUM ('PENDING', 'ACCEPTED', 'DECLINED');
+create type group_status as enum ('PENDING', 'ACCEPTED', 'DECLINED');
 
 -- create cast for group_status
-CREATE CAST (varchar AS group_status) WITH INOUT AS IMPLICIT;
+create cast (varchar AS group_status) with inout as implicit;
 
--- create table report_groups
-create table report_groups
+-- create table report_group
+create table report_group
 (
     id                      serial primary key,
     category_id             int                   not null,
@@ -68,11 +54,11 @@ create table report_groups
     status                  group_status          not null default 'PENDING',
     search_radius_in_meters double precision      not null,
     last_updated            timestamp             not null,
-    foreign key (category_id) references incident_categories (id)
+    foreign key (category_id) references incident_category (id)
 );
 
--- create table incident_reports
-create table incident_reports
+-- create table incident_report
+create table incident_report
 (
     id          serial primary key,
     user_id     int                   not null,
@@ -82,7 +68,7 @@ create table incident_reports
     description text,
     image_path  varchar(255),
     created_at  timestamp             not null,
-    foreign key (category_id) references incident_categories (id),
-    foreign key (user_id) references users (id),
-    foreign key (group_id) references report_groups (id)
+    foreign key (category_id) references incident_category (id),
+    foreign key (user_id) references "user" (id),
+    foreign key (group_id) references report_group (id)
 );

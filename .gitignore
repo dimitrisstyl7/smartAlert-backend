@@ -23,5 +23,7 @@
 hs_err_pid*
 replay_pid*
 
-# DataGrip
-sql-scripts/.idea
+.idea
+docker/.env
+.run
+SmartAlertAPI/src/main/resources/firebase-service-account.json

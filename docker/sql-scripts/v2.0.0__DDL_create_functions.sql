@@ -2,8 +2,7 @@
 CREATE EXTENSION IF NOT EXISTS postgis;
 
 -- Find or create a report group based on proximity
-CREATE
-    OR REPLACE FUNCTION assign_report_to_group()
+CREATE OR REPLACE FUNCTION assign_report_to_group()
     RETURNS TRIGGER AS
 $$
 DECLARE
@@ -23,8 +22,7 @@ BEGIN
     ORDER BY ST_Distance(NEW.location, central_point)
     LIMIT 1;
 
-    RAISE
-        NOTICE 'Close to group with id: %', nearest_group_id;
+    RAISE NOTICE 'Close to group with id: %', nearest_group_id;
 
     -- If no existing group found, create a new group
     IF nearest_group_id IS NULL THEN
@@ -36,46 +34,51 @@ BEGIN
                 CURRENT_TIMESTAMP)
         RETURNING id INTO nearest_group_id;
 
-        RAISE
-            NOTICE 'Created new group with id: %', nearest_group_id;
+        RAISE NOTICE 'Created new group with id: %', nearest_group_id;
 
     ELSE
 
         -- Update the central location and the search radius of the assigned group
 
-        WITH group_locations AS (SELECT location AS report_location
-                                 FROM incident_reports
-                                 WHERE group_id = nearest_group_id
-                                 UNION
-                                 SELECT NEW.location),
-             group_central_point AS (SELECT ST_Centroid(ST_Collect(report_location)) AS group_central_point
-                                     FROM group_locations),
-             distances AS (SELECT ST_Distance(group_central_point::geography, report_location::geography) AS distance
-                           FROM group_locations,
-                                group_central_point),
-             avg_distance AS (SELECT avg(distance) AS mean
-                              FROM distances),
-             standard_deviation AS (SELECT sqrt(sum(power(distance - mean, 2)) / COUNT(distances)) AS standard_deviation
-                                    FROM distances,
-                                         avg_distance)
+        WITH group_locations AS (
+            SELECT location AS report_location
+            FROM incident_report
+            WHERE group_id = nearest_group_id
+            UNION ALL
+            SELECT NEW.location AS report_location
+        ),
+             group_central_point AS (
+                 SELECT ST_Centroid(ST_Collect(report_location)) AS group_central_point
+                 FROM group_locations
+             ),
+             distances AS (
+                 SELECT ST_Distance(group_central_point::geography, report_location::geography) AS distance
+                 FROM group_locations, group_central_point
+             ),
+             avg_distance AS (
+                 SELECT avg(distance) AS mean
+                 FROM distances
+             ),
+             standard_deviation AS (
+                 SELECT sqrt(sum(power(distance - mean, 2)) / COUNT(distances)) AS standard_deviation
+                 FROM distances, avg_distance
+             )
 
         UPDATE report_group
         SET central_point           = (SELECT group_central_point FROM group_central_point),
             search_radius_in_meters = (SELECT init_search_radius_in_meters
                                        FROM incident_category
                                        WHERE id = (SELECT category_id FROM report_group WHERE id = nearest_group_id))
-                + (2.5 * (SELECT standard_deviation from standard_deviation)),
+                + (2.5 * (SELECT standard_deviation FROM standard_deviation)),
             last_updated            = CURRENT_TIMESTAMP
         WHERE id = nearest_group_id;
 
-        RAISE
-            NOTICE 'Updated the group';
+        RAISE NOTICE 'Updated the group';
 
     END IF;
 
     -- Assign the report to the determined group
-    NEW.group_id
-        := nearest_group_id;
+    NEW.group_id := nearest_group_id;
 
     RETURN NEW;
 END
@@ -83,8 +86,7 @@ $$
     LANGUAGE plpgsql;
 
 -- Create a trigger to execute the function before a new report gets inserted
-CREATE
-    OR REPLACE TRIGGER assign_report_trigger
+CREATE OR REPLACE TRIGGER assign_report_trigger
     BEFORE INSERT
     ON incident_report
     FOR EACH ROW

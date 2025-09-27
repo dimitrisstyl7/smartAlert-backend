@@ -12,7 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/statistics")
+@RequestMapping("api/v1/statistics")
 @AllArgsConstructor
 public class StatisticsController {
 

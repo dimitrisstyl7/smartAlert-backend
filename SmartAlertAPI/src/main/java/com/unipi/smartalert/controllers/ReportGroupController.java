@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/groups")
+@RequestMapping("api/v1/groups")
 public class ReportGroupController {
 
     private final ReportGroupService service;

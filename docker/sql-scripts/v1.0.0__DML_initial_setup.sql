@@ -1,20 +1,23 @@
--- Insert most necessary data for the application to work
+-- Insert seed data required by the application
 
--- insert role into table roles
-insert into role (id, title)
-values (1, 'citizen'),
-       (2, 'employee');
+-- Insert roles (plural)
+INSERT INTO roles (id, authority)
+VALUES (1, 'ROLE_CITIZEN'),
+       (2, 'ROLE_EMPLOYEE')
+ON CONFLICT DO NOTHING;
 
--- insert users into table user
--- email: citizen1@dev.com, password: citizen1
--- email: employee1@dev.com, password: employee1
-insert into "user" (password, email, first_name, last_name, role_id)
-values ('$2a$10$VZhQtTrxB..ZBrXfOK9dF.MPpj6Cr.9Cy52edEjzpbjWAQzSlEf.S', 'citizen1@dev.com', 'citizen', 'one', 1),
-       ('$2a$10$z3WUsz7SGCzzIKRpoiDnmeNZzW9dy3/xKTvdkzJU3l7HX5SdPLtOW', 'employee1@dev.com', 'employee', 'one', 2);
+-- Ensure user id sequence is up-to-date (so next inserts get correct values)
+SELECT setval(pg_get_serial_sequence('"user"', 'id'), COALESCE((SELECT MAX(id) FROM users), 1), true);
 
--- insert incident categories into table incident_category
-insert into incident_category (id, init_search_radius_in_meters)
-values (1, 500),
+-- Insert users (no role_id column here; roles are mapped via junction table)
+INSERT INTO customer_role_junction (customer_id, role_id)
+VALUES (1, 1),
+       (2, 2)
+ON CONFLICT DO NOTHING;
+
+-- Insert incident categories into table incident_category
+INSERT INTO incident_category (id, init_search_radius_in_meters)
+VALUES (1, 500),
        (2, 200),
        (3, 1000),
        (4, 3000),
@@ -24,11 +27,12 @@ values (1, 500),
        (8, 1000),
        (9, 1000),
        (10, 200),
-       (11, 100);
+       (11, 100)
+ON CONFLICT DO NOTHING;
 
--- insert incident category names into table incident_category_name
-insert into incident_category_name (category_id, language, name)
-values (1, 'en', 'Flood'),
+-- Insert incident category names into table incident_category_name
+INSERT INTO incident_category_name (category_id, language, name)
+VALUES (1, 'en', 'Flood'),
        (1, 'el', 'Πλημμύρα'),
        (2, 'en', 'Fire'),
        (2, 'el', 'Πυρκαγιά'),
@@ -47,4 +51,5 @@ values (1, 'en', 'Flood'),
        (9, 'en', 'Criminal Act'),
        (9, 'el', 'Εγκληματική Ενέργεια'),
        (10, 'en', 'Traffic Accident'),
-       (10, 'el', 'Τροχαίο Ατύχημα');
+       (10, 'el', 'Τροχαίο Ατύχημα')
+ON CONFLICT DO NOTHING;

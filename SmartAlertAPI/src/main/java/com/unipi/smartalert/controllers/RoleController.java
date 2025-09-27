@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/roles")
+@RequestMapping("api/v1/roles")
 public class RoleController {
 
     @GetMapping

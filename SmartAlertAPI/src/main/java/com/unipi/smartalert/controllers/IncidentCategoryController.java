@@ -13,7 +13,7 @@ import java.util.Locale;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/incident-categories")
+@RequestMapping("api/v1/incident-categories")
 public class IncidentCategoryController {
 
     private final IncidentCategoryService service;

@@ -12,7 +12,7 @@ services:
       # Initialize the database with the scripts in the sql-scripts directory
       - ./sql-scripts:/docker-entrypoint-initdb.d
     ports:
-      - "5432:5432"
+      - "5232:5432"
     networks:
       - smartAlert-network
     restart: unless-stopped

@@ -3,8 +3,8 @@ package com.unipi.smartalert.mappers;
 import com.unipi.smartalert.dtos.LocationDTO;
 import com.unipi.smartalert.dtos.ReportDTO;
 import com.unipi.smartalert.models.IncidentReport;
+import com.unipi.smartalert.repositories.UserRepository;
 import com.unipi.smartalert.services.IncidentCategoryService;
-import com.unipi.smartalert.services.UserService;
 import com.unipi.smartalert.utils.SecurityUtil;
 import lombok.AllArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
@@ -20,7 +20,7 @@ public class IncidentReportMapper {
 
     private final IncidentCategoryService incidentCategoryService;
     private final GeometryFactory geometryFactory;
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final UserMapper userMapper;
 
     public IncidentReport mapToIncidentReport(ReportDTO reportDTO) {
@@ -32,7 +32,7 @@ public class IncidentReportMapper {
         point.setSRID(4326);
 
         return IncidentReport.builder()
-                .user(userService.findByEmail(SecurityUtil.getAuthenticatedUserEmail()))
+                .user(userRepository.findByEmail(SecurityUtil.getAuthenticatedUserEmail()))
                 .category(incidentCategoryService.findById(reportDTO.getCategoryId()))
                 .location(point)
                 .description(reportDTO.getDescription())
@@ -48,7 +48,7 @@ public class IncidentReportMapper {
                 .location(new LocationDTO(incidentReport.getLocation().getY(), incidentReport.getLocation().getX()))
                 .timestamp(incidentReport.getCreatedAt().toString())
                 .description(incidentReport.getDescription())
-                .sender(userMapper.mapToUserCredentialsDTO(incidentReport.getUser()))
+                .sender(userMapper.apply(incidentReport.getUser()))
                 .hasImage(hasImage)
                 .build();
     }

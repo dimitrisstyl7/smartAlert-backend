@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/smartAlert_db
+    url: jdbc:postgresql://localhost:5232/smartAlert_db
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
 

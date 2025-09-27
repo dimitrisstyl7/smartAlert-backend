@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS roles
     authority varchar(64) NOT NULL UNIQUE
 );
 
--- create table "user" (no role_id column here; roles are mapped via junction table)
+-- create table "user"
 CREATE TABLE IF NOT EXISTS users
 (
     id         BIGSERIAL PRIMARY KEY,
@@ -47,15 +47,11 @@ CREATE TABLE IF NOT EXISTS incident_category_name
 );
 
 -- create enum group_status
-DO $$
-    BEGIN
-        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'group_status') THEN
-            CREATE TYPE group_status AS ENUM ('PENDING', 'ACCEPTED', 'DECLINED');
-        END IF;
-    END$$;
+CREATE TYPE group_status AS ENUM ('PENDING', 'ACCEPTED', 'DECLINED');
 
--- create cast for group_status (keep original)
-CREATE CAST IF NOT EXISTS (varchar AS group_status) WITH INOUT AS IMPLICIT;
+
+-- create cast for group_status
+create cast (varchar AS group_status) with inout as implicit;
 
 -- create table report_group
 CREATE TABLE IF NOT EXISTS report_group
@@ -69,7 +65,7 @@ CREATE TABLE IF NOT EXISTS report_group
     FOREIGN KEY (category_id) REFERENCES incident_category (id) ON DELETE CASCADE
 );
 
--- create table incident_report (singular name used by trigger/function)
+-- create table incident_report
 CREATE TABLE IF NOT EXISTS incident_report
 (
     id          serial PRIMARY KEY,

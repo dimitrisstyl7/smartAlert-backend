@@ -1,15 +1,15 @@
 -- Insert seed data required by the application
 
--- Insert roles (plural)
+-- Insert roles
 INSERT INTO roles (id, authority)
 VALUES (1, 'ROLE_CITIZEN'),
        (2, 'ROLE_EMPLOYEE')
 ON CONFLICT DO NOTHING;
 
--- Ensure user id sequence is up-to-date (so next inserts get correct values)
+-- Ensure user id sequence is up-to-date
 SELECT setval(pg_get_serial_sequence('"user"', 'id'), COALESCE((SELECT MAX(id) FROM users), 1), true);
 
--- Insert users (no role_id column here; roles are mapped via junction table)
+-- Insert users
 INSERT INTO customer_role_junction (customer_id, role_id)
 VALUES (1, 1),
        (2, 2)

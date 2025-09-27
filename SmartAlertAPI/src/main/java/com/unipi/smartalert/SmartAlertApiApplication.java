@@ -37,7 +37,7 @@ public class SmartAlertApiApplication {
 
             Role employeeRole = roleRepository.findByAuthority("ROLE_EMPLOYEE").get();
             List<Role> authorities2 = new ArrayList<>();
-            authorities.add(employeeRole);
+            authorities2.add(employeeRole);
 
             User citizen = new User(
                     "citizen@gmail.com",

@@ -8,6 +8,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -28,18 +29,35 @@ public class JWTUtil {
     }
     //for extra claims
     public String issueToken(String subject, String ...scopes){
-        return issueToken(subject, Map.of("scopes", scopes));
+        Object scopesClaim;
+        if (scopes == null || scopes.length == 0) {
+            scopesClaim = "";
+        } else if (scopes.length == 1) {
+            scopesClaim = scopes[0];
+        } else {
+            scopesClaim = List.of(scopes);
+        }
+        return issueToken(subject, Map.of("scope", scopesClaim));
     }
 
+    // replace the List overload
     public String issueToken(String subject, List<String> scopes) {
-        return issueToken(subject, Map.of("scopes", scopes));
+        Object scopesClaim;
+        if (scopes == null || scopes.isEmpty()) {
+            scopesClaim = "";
+        } else if (scopes.size() == 1) {
+            scopesClaim = scopes.get(0);
+        } else {
+            scopesClaim = List.copyOf(scopes);
+        }
+        return issueToken(subject, Map.of("scope", scopesClaim));
     }
 
     public String issueToken(String subject, Map<String, Object> claims){
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
-                .setIssuer("https://amigoscode.com")
+                .setIssuer("http://localhost:8080")
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(
                         Date.from(
@@ -66,7 +84,7 @@ public class JWTUtil {
     }
 
     private Key getSigningKey(){
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
     }
 
     public boolean isTokenValid(String jwt, String username) {

@@ -39,7 +39,7 @@ BEGIN
 
         WITH group_locations AS (
             SELECT location AS report_location
-            FROM incident_report
+            FROM incident_reports
             WHERE group_id = nearest_group_id
             UNION ALL
             SELECT NEW.location AS report_location

@@ -1,4 +1,4 @@
 package com.unipi.smartalert.auth;
 
-public record AuthenticationRequest(String username, String password) {
+public record AuthenticationRequest(String email, String password) {
 }

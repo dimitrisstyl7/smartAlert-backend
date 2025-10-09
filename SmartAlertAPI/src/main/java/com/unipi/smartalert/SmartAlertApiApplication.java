@@ -31,7 +31,7 @@ public class SmartAlertApiApplication {
                           PasswordEncoder passwordEncode, IncidentReportServiceImpl incidentReportServiceImpl){
         return args ->{
 
-            /*Role citizenRole = roleRepository.findByAuthority("ROLE_CITIZEN").get();
+/*            Role citizenRole = roleRepository.findByAuthority("ROLE_CITIZEN").get();
             List<Role> authorities = new ArrayList<>();
             authorities.add(citizenRole);
 
@@ -40,8 +40,8 @@ public class SmartAlertApiApplication {
             authorities2.add(employeeRole);
 
             User citizen = new User(
-                    "citizen@gmail.com",
-                    passwordEncode.encode("123456789"),
+                    "citizen@email.com",
+                    passwordEncode.encode("citizen"),
                     "citizen",
                     "citizen",
                     new Timestamp(System.currentTimeMillis()),
@@ -50,8 +50,8 @@ public class SmartAlertApiApplication {
             userRepository.save(citizen);
 
             User employee = new User(
-                    "employee@gmail.com",
-                    passwordEncode.encode("password"),
+                    "employee@email.com",
+                    passwordEncode.encode("employee"),
                     "employee",
                     "employee",
                     new Timestamp(System.currentTimeMillis()),

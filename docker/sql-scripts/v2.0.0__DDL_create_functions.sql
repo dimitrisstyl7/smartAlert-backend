@@ -1,6 +1,3 @@
--- Enable PostGIS extension
-CREATE EXTENSION IF NOT EXISTS postgis;
-
 -- Find or create a report group based on proximity
 CREATE OR REPLACE FUNCTION assign_report_to_group()
     RETURNS TRIGGER AS

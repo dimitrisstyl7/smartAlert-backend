@@ -3,17 +3,7 @@
 -- Insert roles
 INSERT INTO roles (id, authority)
 VALUES (1, 'ROLE_CITIZEN'),
-       (2, 'ROLE_EMPLOYEE')
-ON CONFLICT DO NOTHING;
-
--- Ensure user id sequence is up-to-date
-SELECT setval(pg_get_serial_sequence('"user"', 'id'), COALESCE((SELECT MAX(id) FROM users), 1), true);
-
--- Insert users
-INSERT INTO user_role_junction (customer_id, role_id)
-VALUES (1, 1),
-       (2, 2)
-ON CONFLICT DO NOTHING;
+       (2, 'ROLE_EMPLOYEE');
 
 -- Insert incident categories into table incident_category
 INSERT INTO incident_categories (id, init_search_radius_in_meters)
@@ -27,8 +17,7 @@ VALUES (1, 500),
        (8, 1000),
        (9, 1000),
        (10, 200),
-       (11, 100)
-ON CONFLICT DO NOTHING;
+       (11, 100);
 
 -- Insert incident category names into table incident_category_name
 INSERT INTO incident_category_names (category_id, language, name)
@@ -51,5 +40,4 @@ VALUES (1, 'en', 'Flood'),
        (9, 'en', 'Criminal Act'),
        (9, 'el', 'Εγκληματική Ενέργεια'),
        (10, 'en', 'Traffic Accident'),
-       (10, 'el', 'Τροχαίο Ατύχημα')
-ON CONFLICT DO NOTHING;
+       (10, 'el', 'Τροχαίο Ατύχημα');

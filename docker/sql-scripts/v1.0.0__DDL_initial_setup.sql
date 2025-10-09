@@ -1,15 +1,15 @@
 -- Enable PostGIS extension
-CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE EXTENSION postgis;
 
 -- create table roles (plural) expected by the JPA entities
-CREATE TABLE IF NOT EXISTS roles
+CREATE TABLE roles
 (
     id        serial PRIMARY KEY,
     authority varchar(64) NOT NULL UNIQUE
 );
 
 -- create table "user"
-CREATE TABLE IF NOT EXISTS users
+CREATE TABLE users
 (
     id         BIGSERIAL PRIMARY KEY,
     email      varchar(254) NOT NULL UNIQUE,
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS users
 );
 
 -- junction table
-CREATE TABLE IF NOT EXISTS user_role_junction
+CREATE TABLE user_role_junction
 (
     customer_id BIGINT NOT NULL,
     role_id     INT   NOT NULL,
@@ -30,14 +30,14 @@ CREATE TABLE IF NOT EXISTS user_role_junction
 );
 
 -- create table incident_category
-CREATE TABLE IF NOT EXISTS incident_categories
+CREATE TABLE incident_categories
 (
     id                           serial PRIMARY KEY,
     init_search_radius_in_meters double precision NOT NULL
 );
 
 -- create table incident_category_name
-CREATE TABLE IF NOT EXISTS incident_category_names
+CREATE TABLE incident_category_names
 (
     category_id int          NOT NULL,
     language    char(2)      NOT NULL,
@@ -54,7 +54,7 @@ CREATE TYPE group_status AS ENUM ('PENDING', 'ACCEPTED', 'DECLINED');
 create cast (varchar AS group_status) with inout as implicit;
 
 -- create table report_group
-CREATE TABLE IF NOT EXISTS report_groups
+CREATE TABLE report_groups
 (
     id                      serial PRIMARY KEY,
     category_id             int                   NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS report_groups
 );
 
 -- create table incident_report
-CREATE TABLE IF NOT EXISTS incident_reports
+CREATE TABLE incident_reports
 (
     id          serial PRIMARY KEY,
     user_id     int                   NOT NULL,

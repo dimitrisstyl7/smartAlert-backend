@@ -8,16 +8,40 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 @UtilityClass
 public class ImageUtil {
 
-    public static void saveImageToDisk(byte[] byteArray, String path) {
+    private static final String DEFAULT_IMAGES_DIR = "images";
+
+    /**
+     * Saves raw bytes to disk under the default images folder.
+     * Returns the saved file absolute path as String.
+     */
+    public static String saveImageToDisk(byte[] bytes, String filename) {
         try {
-            BufferedImage image = convertByteArrayToJPEG(byteArray);
-            ImageIO.write(image, "jpeg", new File(path));
+            Path dirPath = Paths.get(DEFAULT_IMAGES_DIR);
+            Files.createDirectories(dirPath);
+            Path filePath = dirPath.resolve(Objects.requireNonNull(filename));
+            Files.write(filePath, bytes);
+            return filePath.toAbsolutePath().toString(); // store absolute path for safety
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to save image to disk", e);
+        }
+    }
+
+    /**
+     * Read image bytes from disk by absolute or relative path.
+     */
+    public static byte[] readImageFromDisk(String path) {
+        try {
+            return Files.readAllBytes(Paths.get(path));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read image from disk: " + path, e);
         }
     }
 
@@ -35,17 +59,6 @@ public class ImageUtil {
             throw new RuntimeException("Image is null");
         }
         return image;
-    }
-
-    public static byte[] readImageFromDisk(String path) {
-        byte[] byteArray;
-        try {
-            BufferedImage image = ImageIO.read(new File(path));
-            byteArray = convertJPEGToByteArray(image);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return byteArray;
     }
 
     private static byte[] convertJPEGToByteArray(BufferedImage image) {

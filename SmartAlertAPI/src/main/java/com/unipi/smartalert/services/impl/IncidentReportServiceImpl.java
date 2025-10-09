@@ -1,5 +1,6 @@
 package com.unipi.smartalert.services.impl;
 
+import com.google.api.client.util.Value;
 import com.unipi.smartalert.dtos.ReportDTO;
 import com.unipi.smartalert.dtos.ReportGroupDTO;
 import com.unipi.smartalert.enums.GroupStatus;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -41,7 +43,7 @@ public class IncidentReportServiceImpl implements IncidentReportService {
         IncidentReport savedReport = repository.save(mapper.mapToIncidentReport(report));
         entityManager.refresh(savedReport);
 
-        if (image != null) {
+        if (image != null && !image.isEmpty()) {
             byte[] byteArray;
             try {
                 byteArray = image.getBytes();
@@ -49,10 +51,26 @@ public class IncidentReportServiceImpl implements IncidentReportService {
                 throw new RuntimeException(e);
             }
 
-            String path = String.format("image-%d.jpg", savedReport.getId());
-            ImageUtil.saveImageToDisk(byteArray, path);
+            // determine extension safely
+            String original = image.getOriginalFilename();
+            String ext = "jpg";
+            if (original != null && original.contains(".")) {
+                String maybe = original.substring(original.lastIndexOf('.') + 1).toLowerCase();
+                if (maybe.matches("[a-z0-9]{1,5}")) {
+                    ext = maybe;
+                }
+            }
 
-            savedReport.setImagePath(path);
+            // unique filename: image-{reportId}-{uuid}.{ext}
+            String filename = String.format("image-%d-%s.%s",
+                    savedReport.getId(),
+                    UUID.randomUUID().toString(),
+                    ext);
+
+            // save into default "images" folder (no yaml required)
+            String savedPath = ImageUtil.saveImageToDisk(byteArray, filename);
+
+            savedReport.setImagePath(savedPath);
             repository.save(savedReport);
         }
 

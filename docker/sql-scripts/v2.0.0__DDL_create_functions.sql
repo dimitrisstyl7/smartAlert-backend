@@ -12,11 +12,11 @@ BEGIN
     -- Check if the report is close to an existing group
     SELECT id
     INTO nearest_group_id
-    FROM report_group
+    FROM report_groups
     -- group's category is the same as report's
-    WHERE report_group.category_id = NEW.category_id
+    WHERE report_groups.category_id = NEW.category_id
       -- report timestamp is within 2 hours from group last_updated
-      AND ABS(EXTRACT(epoch FROM report_group.last_updated - NEW.created_at) / 3600) <= 2
+      AND ABS(EXTRACT(epoch FROM report_groups.last_updated - NEW.created_at) / 3600) <= 2
       -- report location and group central point are within group search radius
       AND ST_DWithin(NEW.location::geography, central_point::geography, search_radius_in_meters)
     ORDER BY ST_Distance(NEW.location, central_point)
@@ -27,10 +27,10 @@ BEGIN
     -- If no existing group found, create a new group
     IF nearest_group_id IS NULL THEN
 
-        INSERT INTO report_group (category_id, central_point, search_radius_in_meters, last_updated)
+        INSERT INTO report_groups (category_id, central_point, search_radius_in_meters, last_updated)
         VALUES (NEW.category_id,
                 NEW.location,
-                (SELECT init_search_radius_in_meters FROM incident_category WHERE id = NEW.category_id),
+                (SELECT init_search_radius_in_meters FROM incident_categories WHERE id = NEW.category_id),
                 CURRENT_TIMESTAMP)
         RETURNING id INTO nearest_group_id;
 
@@ -64,11 +64,11 @@ BEGIN
                  FROM distances, avg_distance
              )
 
-        UPDATE report_group
+        UPDATE report_groups
         SET central_point           = (SELECT group_central_point FROM group_central_point),
             search_radius_in_meters = (SELECT init_search_radius_in_meters
-                                       FROM incident_category
-                                       WHERE id = (SELECT category_id FROM report_group WHERE id = nearest_group_id))
+                                       FROM incident_categories
+                                       WHERE id = (SELECT category_id FROM report_groups WHERE id = nearest_group_id))
                 + (2.5 * (SELECT standard_deviation FROM standard_deviation)),
             last_updated            = CURRENT_TIMESTAMP
         WHERE id = nearest_group_id;
@@ -88,6 +88,6 @@ $$
 -- Create a trigger to execute the function before a new report gets inserted
 CREATE OR REPLACE TRIGGER assign_report_trigger
     BEFORE INSERT
-    ON incident_report
+    ON incident_reports
     FOR EACH ROW
 EXECUTE FUNCTION assign_report_to_group();

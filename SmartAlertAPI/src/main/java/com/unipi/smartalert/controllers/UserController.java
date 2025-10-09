@@ -22,16 +22,6 @@ public class UserController {
         this.jwtUtil = jwtUtil;
     }
 
-    @GetMapping
-    public List<UserDTO> getCustomers() {
-        return userService.getAllCustomers();
-    }
-
-    @GetMapping("{userId}")
-    public UserDTO getCustomer(@PathVariable("userId") Long userId) {
-        return userService.getCustomer(userId);
-    }
-
     @PostMapping
     public ResponseEntity<?> registerCustomer(@RequestBody UserRegistrationRequest request){
         userService.addCustomer(request);
@@ -39,11 +29,6 @@ public class UserController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, jwtToken)
                 .build();
-    }
-
-    @DeleteMapping("{userId}")
-    public void deleteCustomer(@PathVariable("userId") Long userId){
-        userService.deleteCustomerById(userId);
     }
 
 }

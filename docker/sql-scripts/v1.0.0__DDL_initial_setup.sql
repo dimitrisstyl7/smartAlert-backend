@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS users
     created_at timestamp      NOT NULL DEFAULT now()
 );
 
--- junction table expected by your @ManyToMany mapping
-CREATE TABLE IF NOT EXISTS customer_role_junction
+-- junction table
+CREATE TABLE IF NOT EXISTS user_role_junction
 (
     customer_id BIGINT NOT NULL,
     role_id     INT   NOT NULL,
@@ -30,20 +30,20 @@ CREATE TABLE IF NOT EXISTS customer_role_junction
 );
 
 -- create table incident_category
-CREATE TABLE IF NOT EXISTS incident_category
+CREATE TABLE IF NOT EXISTS incident_categories
 (
     id                           serial PRIMARY KEY,
     init_search_radius_in_meters double precision NOT NULL
 );
 
 -- create table incident_category_name
-CREATE TABLE IF NOT EXISTS incident_category_name
+CREATE TABLE IF NOT EXISTS incident_category_names
 (
     category_id int          NOT NULL,
     language    char(2)      NOT NULL,
     name        varchar(128) NOT NULL,
     PRIMARY KEY (category_id, language),
-    FOREIGN KEY (category_id) REFERENCES incident_category (id) ON DELETE CASCADE
+    FOREIGN KEY (category_id) REFERENCES incident_categories (id) ON DELETE CASCADE
 );
 
 -- create enum group_status
@@ -54,7 +54,7 @@ CREATE TYPE group_status AS ENUM ('PENDING', 'ACCEPTED', 'DECLINED');
 create cast (varchar AS group_status) with inout as implicit;
 
 -- create table report_group
-CREATE TABLE IF NOT EXISTS report_group
+CREATE TABLE IF NOT EXISTS report_groups
 (
     id                      serial PRIMARY KEY,
     category_id             int                   NOT NULL,
@@ -62,11 +62,11 @@ CREATE TABLE IF NOT EXISTS report_group
     status                  group_status          NOT NULL DEFAULT 'PENDING',
     search_radius_in_meters double precision      NOT NULL,
     last_updated            timestamp             NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES incident_category (id) ON DELETE CASCADE
+    FOREIGN KEY (category_id) REFERENCES incident_categories (id) ON DELETE CASCADE
 );
 
 -- create table incident_report
-CREATE TABLE IF NOT EXISTS incident_report
+CREATE TABLE IF NOT EXISTS incident_reports
 (
     id          serial PRIMARY KEY,
     user_id     int                   NOT NULL,
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS incident_report
     description text,
     image_path  varchar(255),
     created_at  timestamp             NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES incident_category (id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES incident_categories (id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    FOREIGN KEY (group_id) REFERENCES report_group (id) ON DELETE CASCADE
+    FOREIGN KEY (group_id) REFERENCES report_groups (id) ON DELETE CASCADE
 );

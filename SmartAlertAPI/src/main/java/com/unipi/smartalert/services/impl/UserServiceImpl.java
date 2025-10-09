@@ -23,15 +23,16 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserDetailsService {
 
     private final UserDataAccessService userDataAccessService;
-    private final UserMapper userMapper;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
-    public UserServiceImpl(UserDataAccessService userDataAccessService, UserMapper userMapper,
-                           RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserDataAccessService userDataAccessService,
+                           RoleRepository roleRepository, PasswordEncoder passwordEncoder,
+                           UserMapper userMapper) {
+        this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.userDataAccessService = userDataAccessService;
-        this.userMapper = userMapper;
         this.roleRepository = roleRepository;
     }
 
@@ -39,20 +40,6 @@ public class UserServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userDataAccessService.selectUserByEmail(username).orElseThrow(() -> new UsernameNotFoundException(
                 "Username: " + username + " not found!"));
-    }
-
-    public List<UserDTO> getAllCustomers() {
-        return userDataAccessService.selectAllUsers().stream()
-                .map(userMapper)
-                .collect(Collectors.toList());
-    }
-
-    public UserDTO getCustomer(Long id) {
-        return userDataAccessService.selectUserByID(id)
-                .map(userMapper)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "customer with id [%s] not found".formatted(id)
-                ));
     }
 
     public void addCustomer(UserRegistrationRequest customerRegistrationRequest) {
@@ -77,14 +64,12 @@ public class UserServiceImpl implements UserDetailsService {
         userDataAccessService.insertUser(customer);
     }
 
-    public void deleteCustomerById(Long customerId) {
-
-        if (!userDataAccessService.existsPersonWithId(customerId)) {
-            throw new ResourceNotFoundException("Customer with id [%s] not found".formatted(customerId));
-        }
-
-
-        userDataAccessService.deleteUserById(customerId);
+    public UserDTO getUser(String email) {
+        return userDataAccessService.selectUserByEmail(email)
+                .map(userMapper)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "customer with email [%s] not found".formatted(email)
+                ));
     }
 
 }

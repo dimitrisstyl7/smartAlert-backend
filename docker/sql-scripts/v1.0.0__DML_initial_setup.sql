@@ -10,13 +10,13 @@ ON CONFLICT DO NOTHING;
 SELECT setval(pg_get_serial_sequence('"user"', 'id'), COALESCE((SELECT MAX(id) FROM users), 1), true);
 
 -- Insert users
-INSERT INTO customer_role_junction (customer_id, role_id)
+INSERT INTO user_role_junction (customer_id, role_id)
 VALUES (1, 1),
        (2, 2)
 ON CONFLICT DO NOTHING;
 
 -- Insert incident categories into table incident_category
-INSERT INTO incident_category (id, init_search_radius_in_meters)
+INSERT INTO incident_categories (id, init_search_radius_in_meters)
 VALUES (1, 500),
        (2, 200),
        (3, 1000),
@@ -31,7 +31,7 @@ VALUES (1, 500),
 ON CONFLICT DO NOTHING;
 
 -- Insert incident category names into table incident_category_name
-INSERT INTO incident_category_name (category_id, language, name)
+INSERT INTO incident_category_names (category_id, language, name)
 VALUES (1, 'en', 'Flood'),
        (1, 'el', 'Πλημμύρα'),
        (2, 'en', 'Fire'),

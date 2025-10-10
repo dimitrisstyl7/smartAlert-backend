@@ -21,7 +21,13 @@ From the Android app, citizens can send a new report, which is a request to the 
 - **Employee Dashboard**: An interface for employees to monitor incidents, and view statistics.
 
 ## Demo Video
-[![SmartAlert-Demo](https://img.youtube.com/vi/9_GyKJ3iy4s/0.jpg)](https://youtu.be/9_GyKJ3iy4s)
+- SmartAlert v1.0 - Demo
+
+[![SmartAlert v1.0 - Demo](https://img.youtube.com/vi/9_GyKJ3iy4s/0.jpg)](https://youtu.be/9_GyKJ3iy4s)
+
+- SmartAlert v2.0 - Demo
+
+[![SmartAlert v2.0 - Demo](https://img.youtube.com/vi/vIyXPnFKxN8/0.jpg)](https://youtu.be/vIyXPnFKxN8)
 
 ## Contributors
 <table>

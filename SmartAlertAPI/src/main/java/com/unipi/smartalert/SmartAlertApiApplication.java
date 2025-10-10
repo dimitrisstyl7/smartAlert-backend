@@ -42,8 +42,8 @@ public class SmartAlertApiApplication {
             User citizen = new User(
                     "citizen@email.com",
                     passwordEncode.encode("citizen"),
-                    "citizen",
-                    "citizen",
+                    "John",
+                    Doe",
                     new Timestamp(System.currentTimeMillis()),
                     authorities);
 
@@ -52,8 +52,8 @@ public class SmartAlertApiApplication {
             User employee = new User(
                     "employee@email.com",
                     passwordEncode.encode("employee"),
-                    "employee",
-                    "employee",
+                    "Paul",
+                    "Smith",
                     new Timestamp(System.currentTimeMillis()),
                     authorities2);
 

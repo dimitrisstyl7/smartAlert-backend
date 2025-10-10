@@ -43,7 +43,7 @@ public class SmartAlertApiApplication {
                     "citizen@email.com",
                     passwordEncode.encode("citizen"),
                     "John",
-                    Doe",
+                    "Doe",
                     new Timestamp(System.currentTimeMillis()),
                     authorities);
 
